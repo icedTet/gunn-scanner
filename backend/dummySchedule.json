@@ -1,0 +1,117 @@
+{
+  "metadata": {
+    "formatVersion": 1,
+    "timezone": "America/Los_Angeles",
+    "defaultNameMappings": {
+      "period0": "Period 0",
+      "period1": "Period 1",
+      "period2": "Period 2",
+      "period3": "Period 3",
+      "period4": "Period 4",
+      "period5": "Period 5",
+      "period6": "Period 6",
+      "period7": "Period 7",
+      "period8": "Period 8",
+      "brunch": "Brunch",
+      "lunch": "Lunch",
+      "self": "SELF",
+      "prime": "PRIME"
+      
+    }
+  },
+  "weekdays": {
+    "monday": [],
+    "tuesday": [],
+    "wednesday": [
+      {
+        "startTime": "28500",
+        "endTime": "31800",
+        "type": "class",
+        "class": "period0"
+      },
+      {
+        "startTime": "32400",
+        "endTime": "38100",
+        "type": "class",
+        "class": "period5"
+      },
+      {
+        "startTime": "38100",
+        "endTime": "39000",
+        "type": "break",
+        "classID": "brunch"
+      },
+      {
+        "startTime": "39000",
+        "endTime": "44400",
+        "type": "class",
+        "classID": "period6"
+      },
+      {
+        "startTime": "46800",
+        "endTime": "52200",
+        "type": "class",
+        "classID": "period7"
+      },
+      {
+        "startTime": "52800",
+        "endTime": "55800",
+        "type": "class",
+        "classID": "prime"
+      }
+    ],
+    "thursday": [
+      {
+        "startTime": "28500",
+        "endTime": "31800",
+        "type": "class",
+        "class": "period0"
+      },
+      {
+        "startTime": "32400",
+        "endTime": "38100",
+        "type": "class",
+        "classID": "period1"
+      },
+      {
+        "startTime": "38100",
+        "endTime": "39000",
+        "type": "break",
+        "classID": "brunch"
+      },
+      {
+        "startTime": "39000",
+        "endTime": "44400",
+        "type": "class",
+        "classID": "period2"
+      },
+      {
+        "startTime": "44400",
+        "endTime": "46200",
+        "type": "break",
+        "classID": "lunch"
+      },
+      {
+        "startTime": "46800",
+        "endTime": "52200",
+        "type": "class",
+        "classID": "period3"
+      },
+      {
+        "startTime": "52800",
+        "endTime": "58200",
+        "type": "class",
+        "classID": "period4"
+      },
+      {
+        "startTime": "58800",
+        "endTime": "64500",
+        "type": "class",
+        "classID": "period8"
+      }
+    ],
+    "friday": [],
+    "saturday": [],
+    "sunday": []
+  }
+}

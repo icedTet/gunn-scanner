@@ -1,0 +1,165 @@
+const express = require("express");
+const server = express();
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const { MongoClient } = require("mongodb");
+const nodemailer = require("nodemailer");
+const env = require("./env");
+const Handlers = require("./Handlers");
+const {
+  WebResponder,
+  ErrorCodes,
+  SuccessCodes,
+  ResponseTypes,
+} = require("./Helpers/WebResponder");
+const ParseUserData = require("./Helpers/ParseUserData");
+const ImageHelper = require("./Helpers/ImageHelper");
+const https = require("https");
+const Cleaners = require("./Helpers/Cleaners");
+const runscript = require("./runscript");
+
+/** @type {MongoClient} */
+globalThis.MongoDB = null;
+globalThis.MailTransporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: env.nodeMailer.email,
+    pass: env.nodeMailer.password,
+  },
+});
+
+process.env = Object.assign(process.env, env);
+globalThis.WebResponder = WebResponder;
+globalThis.ErrorCodes = ErrorCodes;
+globalThis.SuccessCodes = SuccessCodes;
+globalThis.ResponseTypes = ResponseTypes;
+globalThis.Cleaners = Cleaners;
+globalThis.ImageHandler = new ImageHelper(env.imgbb);
+/** @type {import('./Helpers/Databases')} */
+globalThis.Collections = null;
+const MongoConnection = new MongoClient(env.mongo, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+console.log("Establishing Mongo Connection...");
+MongoConnection.connect().then((db) => {
+  console.log("Established Mongo Connection...");
+
+  globalThis.MongoDB = db;
+  globalThis.Collections = require("./Helpers/Databases");
+  server.use(
+    cors({
+      exposedHeaders: ["filename", "updatedat"],
+    })
+  );
+  // runscript();
+  server.use(express.json({ limit: "100mb" }));
+  server.use(ParseUserData);
+
+  server.get("/user/@me", Handlers.User.GetSelf);
+
+  server.post(
+    "/user/@me/update/updatePrimaryCommunity",
+    Handlers.User.UpdatePrimaryCommunity
+  );
+  server.post("/user/*/update", Handlers.User.UpdateUser);
+  server.get("/user/*/", Handlers.User.GetUser);
+
+  server.post("/login", Handlers.Authentication.Login);
+  server.post("/signup", Handlers.Authentication.Signup);
+  server.post("/signup/verify", Handlers.Authentication.VerifySignup);
+  server.post("/community/create", Handlers.Community.Create);
+  server.get("/community/@find", Handlers.Community.Search);
+  server.post("/community/delete", Handlers.Community.Delete);
+  server.get("/community/*/SecureDownload", Handlers.Community.SecureDownload);
+
+  server.get(
+    "/community/*/plugin/*/UserInfo",
+    Handlers.Community.Plugins.GetUserInfo
+  );
+  server.post(
+    "/community/*/plugin/*/UserInfo/",
+    Handlers.Community.Plugins.SetUserInfo
+  );
+  server.get(
+    "/community/*/plugin/*/CommunityInfo/",
+    Handlers.Community.Plugins.GetCommunityPreferences
+  );
+  server.post(
+    "/community/*/plugins/*/CommunityInfo/",
+    Handlers.Community.Plugins.SetCommunityPreferences
+  );
+
+  server.get(
+    "/community/*/course/*/assignment/@struct",
+    Handlers.Courses.Assignments.GetStructure
+  );
+  server.get(
+    "/community/*/course/*/assignment/@all",
+    Handlers.Courses.Assignments.CacheCourseAssignments
+  );
+  server.get(
+    "/community/*/course/*/assignment/*",
+    Handlers.Courses.Assignments.Get
+  );
+  server.post(
+    "/community/*/course/*/assignment/*/comment",
+    Handlers.Courses.Assignments.Comment
+  );
+  server.post(
+    "/community/*/course/*/assignment/*/comment/*/like",
+    Handlers.Courses.Assignments.LikeComment
+  );
+  server.get(
+    "/community/*/course/*/announcements",
+    Handlers.Courses.Announcements.Get
+  );
+  server.get("/community/*/course/*/grades", Handlers.Courses.Grades);
+
+  server.get("/community/*/course/*/", Handlers.Courses.Get);
+  server.post("/community/*/courses/", Handlers.Courses.MultiGet);
+
+  server.get("/community/*/", Handlers.Community.Get);
+
+  server.post("/community/*/update/lmsData", Handlers.Community.UpdateLMS);
+  server.post("/community/*/join", Handlers.Community.Join);
+  server.post("/community/*/LMS/Auth", Handlers.Community.AuthenticateLMS);
+  server.post(
+    "/community/*/LMS/SetupCourses",
+    Handlers.Community.AutoAddCourses
+  );
+  server.get("/community/*/*/", Handlers.NotValidPath);
+  server.get("/*", Handlers.NotValidPath);
+  server.post("/*", Handlers.NotValidPath);
+  if (env.webserver) {
+    const fs = require("fs");
+    https
+      .createServer(
+        {
+          key: fs.readFileSync(env.webserver.keyPath),
+          cert: fs.readFileSync(env.webserver.certPath),
+        },
+        server
+      )
+      .listen(env.port, () => {
+        console.log(`Secure HTTP Server started on port ${env.port}`);
+      });
+  } else {
+    server.listen(env.port);
+    console.log(`HTTP Server running on port ${env.port}`);
+  }
+});
+// (async ()=>{
+
+//   let msg = await MailTransporter.sendMail({
+//     from: '\'Tet from Disadus\' no-reply@disadus.app',
+//     to: 'ic3dplasma@gmail.com',
+//     subject: '[Disadus] (694200) Verify your email!',
+//     text: 'Your security code is 694200. It expires in 15 minutes.',
+//     html: require('./Assets/email')('John Li', [6,9,4,2,0,0,0]),
+//   });
+//   console.log('Msg sent!');
+
+// })();
