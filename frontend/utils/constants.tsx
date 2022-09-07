@@ -1,0 +1,1 @@
+export const APIDomain = process.env.NODE_ENV === 'production' ? 'https://apiscanner.tet.moe' : 'http://localhost:443';
