@@ -104,3 +104,4 @@ dist
 .tern-port
 
 backend/keys
+backend/env.ts
