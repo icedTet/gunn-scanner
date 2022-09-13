@@ -1,9 +1,6 @@
 import { NextFunction, Request, Response, Express } from "express";
-import { DisadusUser } from "../../Helpers/Types/RawDisadusTypes";
 import { RESTHandler, RESTMethods } from "../../server";
 import child_process from "child_process";
-import { getUser, updateUser } from "../../Helpers/DisadusAPIClient/UserAPIs";
-import { UserCleaners } from "../../Helpers/Cleaners/UserCleaners";
 export const SearchUsers = {
   path: "/users",
   method: RESTMethods.GET,
@@ -23,18 +20,18 @@ export const SearchUsers = {
       });
       return;
     }
-    const users = (await MongoDB!
-      .db("UserData")
-      .collection("users")
-      .find({
-        username: {
-          $regex: new RegExp(`${includes}`, "i"),
-        },
-      })
-      .limit(limit)
-      .toArray()) as unknown as DisadusUser[] | null;
+    // const users = (await MongoDB!
+    //   .db("UserData")
+    //   .collection("users")
+    //   .find({
+    //     username: {
+    //       $regex: new RegExp(`${includes}`, "i"),
+    //     },
+    //   })
+    //   .limit(limit)
+    //   .toArray()) as unknown as DisadusUser[] | null;
 
-    res.status(200).send(users?.map((x) => UserCleaners.CleanPublicUser(x)));
+    // res.status(200).send(users?.map((x) => UserCleaners.CleanPublicUser(x)));
   },
 } as RESTHandler;
 export default SearchUsers;

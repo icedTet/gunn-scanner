@@ -1,7 +1,5 @@
 import { Socket } from "socket.io";
-import { UserCleaners } from "../../../Helpers/Cleaners/UserCleaners";
-import { getUser } from "../../../Helpers/DisadusAPIClient/UserAPIs";
-import { DisadusUser } from "../../../Helpers/Types/RawDisadusTypes";
+import { cleanUser, getUser } from "../../../Helpers/handlers/UserLib";
 import { SocketHandler } from "../../SocketHandler";
 
 export const SPGetUser = {
@@ -9,9 +7,7 @@ export const SPGetUser = {
   run: async (socket: Socket, _, self: string, userID: string) => {
     console.log("user.id", self, userID);
     socket.emit("userResponse", {
-      user: UserCleaners.CleanPublicUser(
-        (await getUser(userID)) as DisadusUser
-      ),
+      user: await getUser(userID).then(cleanUser),
       id: userID,
     });
   },

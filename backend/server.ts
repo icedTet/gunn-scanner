@@ -5,33 +5,29 @@ import cors from "cors";
 import { MongoClient } from "mongodb";
 import nodemailer from "nodemailer";
 import { env } from "./env";
-import { UserCleaners } from "./Helpers/Cleaners/UserCleaners";
 import { ParseUserData } from "./Helpers/ParseUserData";
 import SocketServer from "./SocketAPI/SocketServer";
 import { readFileSync } from "fs";
 import { lstat, readdir } from "fs/promises";
-import { DisadusUser } from "./Helpers/Types/RawDisadusTypes";
 import { Storage } from "@google-cloud/storage";
 import { UserTokenTypes } from "./Helpers/Encryptions";
-import { PluginIntent } from "./RESTAPI/plugins/PluginOAuth";
-import { getCourse } from "./Helpers/DisadusAPIClient/CommunityCourseAPIs";
+import { User } from "../types/UserTypes";
 declare global {
   var MongoDB: MongoClient | null;
   var MailTransporter: nodemailer.Transporter | null;
   var storage: Storage;
 
-  var Cleaners: { UserCleaners: UserCleaners };
 }
 export interface RESTHandler {
   path: string;
   method: RESTMethods;
   sendUser: boolean;
-  intent?: PluginIntent;
+  // intent?: PluginIntent;
   run: (
     req: Request,
     res: Response,
     next: NextFunction,
-    user?: DisadusUser
+    user?: User
   ) => void | Promise<void> | any | Promise<any>;
 }
 export enum RESTMethods {
@@ -50,9 +46,6 @@ globalThis.MailTransporter = nodemailer.createTransport({
     pass: env.nodeMailer.password,
   },
 });
-globalThis.Cleaners = {
-  UserCleaners: UserCleaners,
-};
 process.env = Object.assign(process.env, env);
 globalThis.storage = new Storage({
   credentials: env.google,
@@ -86,21 +79,21 @@ const importAllHandlers = async (path: string, failedImports: string[]) => {
           server[handler.method](handler.path, async (req, res, next) => {
             let userInfo = handler.sendUser ? await ParseUserData(req) : null;
             if (userInfo?.tokenType === UserTokenTypes.PLUGIN) {
-              if (!handler.intent)
-                return res
-                  .sendStatus(403)
-                  .send("Endpoint does not support Plugin Generated Tokens");
-              if (!userInfo.intents)
-                return res
-                  .sendStatus(403)
-                  .send("Plugin Token does not have any intents");
-              if (!userInfo.intents.includes(handler.intent)) {
-                return res
-                  .sendStatus(403)
-                  .send(
-                    "Plugin Token does not have permission to use this endpoint"
-                  );
-              }
+              // if (!handler.intent)
+              //   return res
+              //     .sendStatus(403)
+              //     .send("Endpoint does not support Plugin Generated Tokens");
+              // if (!userInfo.intents)
+              //   return res
+              //     .sendStatus(403)
+              //     .send("Plugin Token does not have any intents");
+              // if (!userInfo.intents.includes(handler.intent)) {
+              //   return res
+              //     .sendStatus(403)
+              //     .send(
+              //       "Plugin Token does not have permission to use this endpoint"
+              //     );
+              // }
             }
             handler.run(
               req as Request,

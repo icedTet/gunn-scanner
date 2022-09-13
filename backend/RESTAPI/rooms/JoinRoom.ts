@@ -2,8 +2,8 @@ import { NextFunction, Request, Response, Express } from "express";
 import { RESTHandler, RESTMethods } from "../../server";
 import child_process from "child_process";
 export const GetUserSelf = {
-  path: "/user/@me/",
-  method: RESTMethods.GET,
+  path: "/rooms/@me/",
+  method: RESTMethods.POST,
   sendUser: true,
   run: async (req, res, next, user) => {
     if (!user) {

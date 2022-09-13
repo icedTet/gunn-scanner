@@ -2,7 +2,6 @@ import { Server, Socket, ServerOptions } from "socket.io";
 import https from "https";
 import { ParseUserData } from "../Helpers/ParseUserData";
 import { Encryptions } from "../Helpers/Encryptions";
-import { getUser } from "../Helpers/DisadusAPIClient/UserAPIs";
 import { fstatSync, lstatSync, readdirSync } from "fs";
 import { SocketHandler } from "./SocketHandler";
 import { readdir } from "fs/promises";
