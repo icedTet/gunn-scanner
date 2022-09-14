@@ -1,8 +1,10 @@
+import { GoogleLogin } from "@react-oauth/google";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
+import jwt_decode from "jwt-decode";
 
 const Home: NextPage = () => {
   const [mode, setMode] = useState("light" as "light" | "dark");
@@ -21,11 +23,28 @@ const Home: NextPage = () => {
         <h1 className={``}>
           Welcome to <a href="https://nextjs.org">!</a>
         </h1>
-
         <p className={styles.description}>
           Get started by editing{" "}
           <code className={styles.code}>pages/index.tsx</code>
         </p>
+        <div
+        // className={`dark:invert-100 dark:hue-rotate-180`}
+        >
+          <GoogleLogin
+            onSuccess={(credentialResponse) => {
+              console.log(jwt_decode(credentialResponse.credential!));
+            }}
+            onError={() => {
+              console.log("Login Failed");
+            }}
+            theme="filled_black"
+            auto_select={false}
+            {...{
+              'size': 'large',
+            }}
+            // hosted_domain='pausd.org'
+          />
+        </div>
 
         <div className={styles.grid}>
           <a href="https://nextjs.org/docs" className={styles.card}>
